@@ -1,7 +1,6 @@
-## 状态码
+## status code
 
----------------------
 ### 500 Come back later
-### 422 参数不正确|不合法
-### 400 当天发送次数超额
-### 200 成功
+### 429 Request too frequently
+### 422 param lack or error | illegal
+### 200 success
