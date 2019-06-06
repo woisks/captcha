@@ -19,7 +19,7 @@ use Woisks\Captcha\Models\Traits\SMSCode;
  */
 class SendValidateCodeJob implements ShouldQueue
 {
-
+    use SMSCode;
     public  $tries =2;
     /**
      * type  2019/5/17 11:16
@@ -27,7 +27,7 @@ class SendValidateCodeJob implements ShouldQueue
      * @var  string
      */
     public $type;
-    use SMSCode;
+
     /**
      * name  2019/5/17 11:16
      *
@@ -55,11 +55,6 @@ class SendValidateCodeJob implements ShouldQueue
         $this->type = $type;
         $this->name = $name;
         $this->code = $code;
-    }
-
-    public function retryUntil()
-    {
-        return now()->addSeconds(5);
     }
 
     /**
@@ -128,7 +123,6 @@ class SendValidateCodeJob implements ShouldQueue
 
             $this->sendSmsCode($name, $code);
         }
-
         \Log::info('validate', [$name, $code]);
     }
 }

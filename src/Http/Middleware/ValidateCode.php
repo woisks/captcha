@@ -11,7 +11,7 @@ use Woisks\Captcha\Models\Traits\AuthValidateCode;
 /**
  * Class ValidateCode
  *
- * @package Woisk\Captcha\Http\Middleware
+ * @package Woisks\Captcha\Http\Middleware
  *
  * @Author  Maple Grove  <bolelin@126.com> 2019/5/16 11:23
  */
@@ -19,8 +19,9 @@ class ValidateCode
 {
     use AuthValidateCode;
 
+
     /**
-     * handle 2019/5/16 11:23
+     * handle 2019/6/5 19:42
      *
      * @param          $request
      * @param \Closure $next
@@ -29,34 +30,67 @@ class ValidateCode
      */
     public function handle($request, Closure $next)
     {
-        //判断需要验证码的Url
+        $name = $this->validate($request);
 
-
-        //验证必须的参数
-
-        //效验验证码
-
-        //返回响应 或者 下放请求
-        $name = $request->input('username');
-        if (empty($name)) {
-            return res(422, 'require username');
+        if (!is_string($name)) {
+            return $name;
         }
 
-        if (is_email($name) || is_phone($name)) {
+        $service = $this->service($request->input($name), $request->input('code'));
 
-            if (empty($request->input('code'))) {
-                return res(422, 'require username and code');
-            }
-
-            $Code = $this->authCode($name, $request->input('code'));
-
-            if (!is_null($Code)) {
-                return $Code;
-            }
+        if (!is_null($service)) {
+            return $service;
         }
 
         return $next($request);
-
     }
 
+    /**
+     * validate 2019/6/5 18:26
+     *
+     * @param $request
+     *
+     * @return \Illuminate\Http\JsonResponse|string
+     */
+    private function validate($request)
+    {
+        $collection = collect(config('woisk.captcha_rule'));
+
+        $validator = \Validator::make($request->all(), [
+
+            $collection->get($request->path()) => 'required|string',
+            'code'                             => 'required|numeric|digits:6',
+        ]);
+
+        if ($validator->fails()) {
+            return res(422, $validator->errors()->first());
+        }
+
+        return $collection->get($request->path());
+    }
+
+
+    /**
+     * service 2019/6/5 19:47
+     *
+     * @param $name
+     * @param $code
+     *
+     * @return null|\Illuminate\Http\JsonResponse
+     */
+    private function service($name, $code)
+    {
+        if (!is_email($name) && !is_phone($name)) {
+
+            return res(422, 'param require china phone or email ');
+        }
+
+        $Code = $this->authCode($name, $code);
+
+        if (!is_null($Code)) {
+            return $Code;
+        }
+
+        return null;
+    }
 }

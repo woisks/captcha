@@ -27,11 +27,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app['swift.transport']->extend('directmail', function () {
-            $config = $this->app['config']->get('services.directmail', []);
+
+            $config = $this->app['config']->get('woisk.captcha.directmail', []);
 
             return new DirectMailTransportSerivce(new Client($config), $config['key'], $config['secret'], $config);
         });
-        $this->loadViewsFrom(__DIR__.'/../views', 'captcha');
+
+        $this->loadViewsFrom(__DIR__ . '/../views', 'captcha');
 
         $this->loadRoutesFrom(__DIR__ . '/../routes.php');
 

@@ -32,10 +32,10 @@ trait AuthValidateCode
 
         //$db=null or expire_time=false
         if (!$db) {
-            return res(422, 'username or code error');
+            return res(422, 'name or code error');
         }
         if (Carbon::now()->timestamp > $db->expire_time) {
-            return res(422, 'code error or expired');
+            return res(422, 'code expired');
         }
 
         //更改状态

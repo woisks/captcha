@@ -22,7 +22,9 @@
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
-      "providers": ["Woisks\\Captcha\\Providers\\AppServiceProvider"]
+      "providers": [
+        "Woisks\\Captcha\\Providers\\AppServiceProvider"
+      ]
     }
   }
 }
