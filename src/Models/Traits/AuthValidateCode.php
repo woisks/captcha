@@ -26,16 +26,16 @@ trait AuthValidateCode
      *
      * @return null|\Illuminate\Http\JsonResponse
      */
-    public function authCode(string $name, string $code): ?JsonResponse
+    public function authCode(string $name, string $code, string $name_type): ?JsonResponse
     {
         $db = app(CaptchaRepository::class)->nameCodeFirst($name, $code);
 
         //$db=null or expire_time=false
         if (!$db) {
-            return res(422, 'name or code error');
+            return res(404, $name_type . ' or  captcha code error');
         }
         if (Carbon::now()->timestamp > $db->expire_time) {
-            return res(422, 'code expired');
+            return res(422, 'captcha code expired');
         }
 
         //更改状态

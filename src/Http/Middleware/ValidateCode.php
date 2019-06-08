@@ -36,7 +36,7 @@ class ValidateCode
             return $name;
         }
 
-        $service = $this->service($request->input($name), $request->input('code'));
+        $service = $this->service($request->input($name), $request->input('code'), $name);
 
         if (!is_null($service)) {
             return $service;
@@ -54,19 +54,19 @@ class ValidateCode
      */
     private function validate($request)
     {
-        $collection = collect(config('woisk.captcha_rule'));
+        $username = collect(config('woisk.captcha_rule'))->get($request->path());
 
         $validator = \Validator::make($request->all(), [
 
-            $collection->get($request->path()) => 'required|string',
-            'code'                             => 'required|numeric|digits:6',
+            $username => 'required|string',
+            'code'    => 'required|numeric|digits:6',
         ]);
 
         if ($validator->fails()) {
             return res(422, $validator->errors()->first());
         }
 
-        return $collection->get($request->path());
+        return $username;
     }
 
 
@@ -78,14 +78,14 @@ class ValidateCode
      *
      * @return null|\Illuminate\Http\JsonResponse
      */
-    private function service($name, $code)
+    private function service($name, $code, $name_type)
     {
         if (!is_email($name) && !is_phone($name)) {
 
             return res(422, 'param require china phone or email ');
         }
 
-        $Code = $this->authCode($name, $code);
+        $Code = $this->authCode($name, $code, $name_type);
 
         if (!is_null($Code)) {
             return $Code;

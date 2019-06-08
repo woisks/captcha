@@ -73,7 +73,7 @@ trait SendValidateCode
         $int = app(CaptchaRepository::class)->todaySendCount($name);
 
         if ($int >= 2) {
-            return res(429, 'today validator code excess');
+            return res(419, 'today validator code excess');
         }
 
         return null;

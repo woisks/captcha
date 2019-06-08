@@ -17,7 +17,7 @@ trait SMSCode
         try {
             $sms->send($phone,
                 [
-                    'template' => 'SMS_85555094',
+                    'template' => config('woisk.captcha.template.aliyun.captcha'),
                     'data'     => [
                         'code' => $code
                     ]
